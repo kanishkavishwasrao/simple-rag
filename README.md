@@ -1,32 +1,36 @@
 # Simple RAG: Ask Your Documents
 
-A minimal, end-to-end Retrieval-Augmented Generation pipeline built from scratch (no LangChain), so every step is visible and explainable.
+A minimal, end-to-end Retrieval-Augmented Generation pipeline built from scratch (no LangChain), running fully locally: local embeddings, local vector DB, local LLM via Ollama. No API keys, no cost, no data leaving your machine.
 
 ## How it works
 
 ```
  Documents (.md/.txt/.pdf)
-        │  chunk (120 words, 30 overlap)
+        │  chunk (400 words, 80 overlap)
         ▼
  Sentence-Transformers embeddings ──► ChromaDB (cosine similarity)
                                             │
- User question ──► embed ──► top-3 chunks ──┘
+ User question ──► embed ──► top-20 chunks ─┘
+                                │
+                                ▼
+                 Cross-encoder reranker ──► top-6 chunks
                                 │
                                 ▼
               Prompt = system rules + chunks + question
                                 │
                                 ▼
-                     Claude (answers only from context, cites sources)
+              Ollama (llama3.2) answers only from context, cites sources
                                 │
                                 ▼
                        Answer + source chunks
 ```
 
-## Tech stack
-- **Embeddings:** `all-MiniLM-L6-v2` (local, free)
-- **Vector DB:** ChromaDB (persistent)
-- **LLM:** Claude via the Anthropic API
-- **UI:** Streamlit
+Tech stack
+Embeddings: all-MiniLM-L6-v2 (local, free)
+Vector DB: ChromaDB (persistent, cosine)
+Reranker: cross-encoder/ms-marco-MiniLM-L-6-v2
+LLM: llama3.2 running locally through Ollama
+UI: Streamlit
 
 ## Run it
 
